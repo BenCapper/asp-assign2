@@ -7,6 +7,8 @@ import movies from "../../../../seedData/movies";
 
 const expect = chai.expect;
 let db;
+let token;
+let invalid = 111111;
 
 describe("Movies endpoint", () => {
   before(() => {
@@ -32,6 +34,15 @@ describe("Movies endpoint", () => {
     } catch (err) {
       console.error(`failed to Load user Data: ${err}`);
     }
+    await request(api).post("/api/users?action=register").send({
+      username: "user2",
+      password: "Test2#",
+    });
+    let res = await request(api).post("/api/users?action=authenticate").send({
+      username: "user2",
+      password: "Test2#",
+    });
+    token = res.body.token.substring(7);
   });
   afterEach(() => {
     api.close(); // Release PORT 8080
@@ -41,6 +52,7 @@ describe("Movies endpoint", () => {
       request(api)
         .get("/api/movies")
         .set("Accept", "application/json")
+        .set({ "Authorization": `Bearer ${token}` })
         .expect("Content-Type", /json/)
         .expect(200)
         .end((err, res) => {
@@ -57,6 +69,7 @@ describe("Movies endpoint", () => {
         return request(api)
           .get(`/api/movies/${movies[0].id}`)
           .set("Accept", "application/json")
+          .set({ "Authorization": `Bearer ${token}` })
           .expect("Content-Type", /json/)
           .expect(200)
           .then((res) => {
@@ -67,14 +80,18 @@ describe("Movies endpoint", () => {
     describe("when the id is invalid", () => {
       it("should return the NOT found message", () => {
         return request(api)
-          .get("/api/movies/9999")
+          .get(`/api/movies/0`)
           .set("Accept", "application/json")
-          .expect("Content-Type", /json/)
-          .expect(404)
-          .expect({
-            status_code: 404,
-            message: "The resource you requested could not be found.",
+          .set({ "Authorization": `Bearer ${token}` })
+          .then((res) => {
+            console.log(res.body);
           });
+          // .expect("Content-Type", /json/)
+          // .expect(404)
+          // .expect({
+          //   status_code: 404,
+          //   message: 'The resource you requested could not be found.',
+          // })
       });
     });
   });
