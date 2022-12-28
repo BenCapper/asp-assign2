@@ -11,35 +11,14 @@ router.get('/', async (req, res) => {
     res.status(200).json(genres);
 });
 
-// Update a genre
-router.put('/:id', async (req, res) => {
-    if (req.body._id) delete req.body._id;
-    const result = await Genre.updateOne({
-        _id: req.params.id,
-    }, req.body);
-    if (result.matchedCount) {
-        res.status(200).json({ code:200, msg: 'Genre Updated Sucessfully' });
-    } else {
-        res.status(404).json({ code: 404, msg: 'Unable to Update Genre' });
-    }
-  });
-
 router.get('/movie', asyncHandler(async (req, res) => {
-  const movieGenres = await getGenres();
-  if (movieGenres) {
-      res.status(200).json(movieGenres);
-  } else {
-      res.status(404).json({message: 'The resource you requested could not be found.', status_code: 404});
-  }
+    const movieGenres = await getGenres();
+    res.status(200).json(movieGenres);
 }));
 
 router.get('/tv', asyncHandler(async (req, res) => {
     const tvGenres = await getTvGenres();
-    if (tvGenres) {
-        res.status(200).json(tvGenres);
-    } else {
-        res.status(404).json({message: 'The resource you requested could not be found.', status_code: 404});
-    }
+    res.status(200).json(tvGenres);
   }));
 
 export default router;
