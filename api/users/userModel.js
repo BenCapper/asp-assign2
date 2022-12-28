@@ -7,8 +7,8 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   username: { type: String, unique: true, required: true},
   password: {type: String, required: true },
-  favouriteMovies: [{type: mongoose.Schema.Types.ObjectId, ref: 'Movies'}],
-  favouriteTv: [{type: mongoose.Schema.Types.ObjectId, ref: 'Tv'}]
+  favouriteMovies: [{type: Number}],
+  favouriteTv: [{type: Number}]
 });
 
 UserSchema.statics.findByUserName = function (username) {
