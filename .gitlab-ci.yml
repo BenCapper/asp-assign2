@@ -41,6 +41,7 @@ Build_api:
 
 test_api:
   stage: test
+  allow_failure: true
   script:
     - npm test
 
